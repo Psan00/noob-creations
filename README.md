@@ -1,3 +1,7 @@
+18 Jun 2024
+
+Added RPS.java (Rock, Paper, Scissors).
+
 Just a newbie creating a noob project to learn and improve Java coding.
 
 Honestly, I just followed a template online and worked off from there. Still only know how to start from here so am using this as a start to learn how to write from scratch. 
