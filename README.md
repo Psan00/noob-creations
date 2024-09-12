@@ -1,3 +1,7 @@
+12 Sep 2024
+
+Added calc.java (simple calculator capable of only adding, subtracting, dividing and multiplying)
+
 18 Jun 2024
 
 Added RPS.java (Rock, Paper, Scissors).
