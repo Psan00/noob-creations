@@ -1,3 +1,8 @@
+8 Oct 2024
+Added NumberGame.java 
+Contains some kind of UI.
+
+
 12 Sep 2024
 
 Added calc.java (simple calculator capable of only adding, subtracting, dividing and multiplying)
