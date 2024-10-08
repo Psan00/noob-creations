@@ -1,90 +1,109 @@
-package NumberGame;
-
-import java.util.Scanner;
+import javax.swing.*;
+import java.awt.event.*;
+import java.util.*;
+import java.awt.*;
+import java.awt.event.*;
 
 public class NumberGame {
 
-    public static void numberGuessing() {
-        Scanner sc = new Scanner(System.in);
+    //instantiate all ui components first
+    JFrame frame = new JFrame("Number Guessing Game");
+    JTextField inputTextField = new JTextField();
+    JButton[] functionButtons = new JButton[2];
+    JButton cnfmButton, quitButton;
+    JLabel mainScreenLabel = new JLabel("Guess a number from 1 - 100!");
+    Font myFont = new Font("Arial", Font.BOLD, 15); //if you want to make it bold & italic, use the + sign and add Font.ITALIC after the +
 
-        //generate the number to be guessed, 1-100;
-        int number = (int) (100*Math.random()) + 1;
+    //how the game runs
+    Random random = new Random();
+    int answer = random.nextInt(0,100) + 1, guess; //answer is between 1 - 100 and instantiate the guess variable
 
-        //number of tries/guesses:
-        int K = 5;
-        int guess, i;
+    //core of how the game runs
+    NumberGame() {
 
-        System.out.println("A number was randomly chosen," +
-                           " between 1 to 100." +
-                           " Guess within 5 tries to win.");
+        //frame settings
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 300);
+        frame.setLayout(null);
 
-        System.out.println("Guess the number: ");
+        mainScreenLabel.setBounds(0, 0, 400, 150);
+        mainScreenLabel.setFont(myFont);
+        mainScreenLabel.setHorizontalAlignment(SwingConstants.CENTER); //alights text to the center
 
-        //Iterates the loop over number of tries:
-        for (i = 0; i < K; i++) {
-            String input1 = sc.nextLine();
-            /*validating if guess is an int*/
-            if (!isInt(input1)) /*if input1 is true (an int)*/ {
-                i--;
-                System.out.println("Please only input a number between 1 to 100.");
-            } else {
-                /* makes the input1 an int and makes it into guess.
-                else, making guess = sc.nextInt() creates a double input every guess*/
-                guess = Integer.parseInt(input1);
-                //if not between 1 - 100, try again
-                if (guess < 1 || guess > 100) {
-                    System.out.println("Please guess a number between 1 to 100. ");
-                    i--;
-                }
-                /* self-explanatory */
-                else if (guess == number) {
-                    System.out.println("Congratulations! You've got it right! The number was" + number);
-                    break;
-                } else if ((guess > number) && (i != K - 1)) /* remember you start i from 0 */ {
-                    System.out.println("The number is lower than " + guess + ". Try again:");
-                } else if ((guess < number) && (i != K - 1)) {
-                    System.out.println("The number is higher than " + guess + ". Try again:");
-                }
+        inputTextField.setBounds(150, 125, 100, 25);
+        inputTextField.setHorizontalAlignment(SwingConstants.CENTER);
+        inputTextField.setFont(myFont);
+
+        //validate inputs made by user:
+        inputTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                String value = inputTextField.getText();
+                int i = value.length();
+                inputTextField.setEditable(e.getKeyChar() >= '0' && e.getKeyChar() <= '9' || e.getKeyChar() == '\b');
             }
-        }
+        });
 
-        /* lose condition */
-        if (i == K) {
-            System.out.println("You lose. The number was " + number);
-            System.out.println("Try again!");
-        }
+
+        //make and show buttons
+        functionButtons[0] = cnfmButton;
+        functionButtons[1] = quitButton;
+        cnfmButton = new JButton("Confirm");
+        cnfmButton.setBounds(100, 200, 100 ,30);
+        cnfmButton.setFont(myFont);
+        quitButton = new JButton("Quit");
+        quitButton.setBounds(200, 200, 100, 30);
+        quitButton.setFont(myFont);
+
+        //make cnfmButton accept the input. if correct, show text, pass. if fail, retry and show text.
+        cnfmButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                guess = Integer.parseInt(inputTextField.getText()); //maybe add a catch here and show an "error" when submitting empty field.
+                if (answer == guess) {
+                    System.out.println("Correct!\n");
+                    String [] options = {"Yes", "No"};
+                    var selection = JOptionPane.showOptionDialog(null,"Correct! A new game will now restart! " +
+                            "Do you want to continue?", "New game?", 0, 1, null, options, options[0]);
+
+                    if (selection == 1) {
+                        JOptionPane.showMessageDialog(null, "See you again, bye!", "Bye!", JOptionPane.INFORMATION_MESSAGE); System.exit(0);
+                    } else {
+                        answer = random.nextInt(0,100) + 1;
+                        System.out.println(answer);
+                    }
+
+                } else JOptionPane.showMessageDialog(null, "Incorrect, try again!");
+
+                inputTextField.setText("");
+
+            }
+        });
+
+        //make quit button actually quit
+        quitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "See you again, bye!", "Bye!", JOptionPane.INFORMATION_MESSAGE);
+                System.exit(0);
+            }
+        });
+
+        //makes everything added into the frame, and be visible
+        frame.add(mainScreenLabel);
+        frame.add(inputTextField);
+        frame.add(cnfmButton);
+        frame.add(quitButton);
+        frame.setVisible(true);
+
+        System.out.println("REMEMBER TO REMOVE AT THE END OF DEBUGGING\n" + answer);
 
     }
 
-    /* this is a mini checker to see if the input is an int or not */
-    public static boolean isInt(String checker) {
+    public static void main(String[] args) {
 
-        try {
-            Integer.parseInt(checker);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+        NumberGame launch = new NumberGame();
 
-    }
-
-    public static void main (String[] args) {
-        numberGuessing();
     }
 
 }
-
-/* Notes:
-Existing bugs:
-1. Cannot refuse a non-numbered guess. if Loop at 30 causes an infinite loop. Find out how to resolve this.
-    Likely because hasNextInt() takes in the next input. if the input doesn't exist, then the loop is infinite.
-
-    1.1:
-    this has been fixed by implementing another method to verify the user's input.
-    but now the issue is how to return to the original loop of accepting the user's input and verifying
-    if the input is an int or not.
-
-    1.2:
-    fixed i guess? somehow shifting the String input1 = sc.nextLine(); to within for loop fixed the issue.
-    using if loop on isInt method on line 30 worked for some reason.
-*/
